@@ -1,3 +1,70 @@
-body {
+:root {
   --wcm-z-index: 1300;
+  --vx-bg: #0a0b14;
+  --vx-surface: #121528;
+  --vx-surface-2: #171b33;
+  --vx-border: rgba(255, 255, 255, 0.08);
+  --vx-text: #e9ecff;
+  --vx-text-muted: #9aa3c7;
+  --vx-accent: #7c5cff;
+  --vx-accent-2: #21d4fd;
+  --vx-accent-3: #00f0a8;
+  --vx-shadow: 0 20px 60px rgba(12, 16, 40, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(1200px 600px at 10% -20%, #1b1f3a 0%, transparent 60%),
+    radial-gradient(1000px 800px at 90% -30%, #182a4d 0%, transparent 55%), var(--vx-bg);
+  color: var(--vx-text);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+a {
+  color: var(--vx-accent-2);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  background: linear-gradient(135deg, var(--vx-accent) 0%, var(--vx-accent-2) 100%);
+  border: 0;
+  color: #0a0b14;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: transparent;
+  border: 1px solid var(--vx-border);
+  color: var(--vx-text);
+}
+
+table {
+  border: 1px solid var(--vx-border);
+  background: var(--vx-surface);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--vx-shadow);
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--vx-border);
+}
+
+header {
+  background: rgba(10, 11, 20, 0.6);
+  backdrop-filter: blur(12px);
 }

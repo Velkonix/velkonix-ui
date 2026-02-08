@@ -13,8 +13,8 @@ export function AppHeader() {
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: '16px',
-        padding: '8px 12px',
-        borderBottom: '1px solid #ccc',
+        padding: '12px 20px',
+        borderBottom: '1px solid var(--vx-border)',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -22,9 +22,15 @@ export function AppHeader() {
           <img src={uiConfig.appLogo} alt="Logo" width={72} height={20} />
         </Link>
         <nav style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Link href={ROUTES.dashboard}>Dashboard</Link>
-          <Link href={ROUTES.markets}>Markets</Link>
-          <Link href={ROUTES.staking}>Staking</Link>
+          <Link href={ROUTES.dashboard} style={{ color: 'var(--vx-text)' }}>
+            Dashboard
+          </Link>
+          <Link href={ROUTES.markets} style={{ color: 'var(--vx-text)' }}>
+            Markets
+          </Link>
+          <Link href={ROUTES.staking} style={{ color: 'var(--vx-text)' }}>
+            Staking
+          </Link>
         </nav>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
