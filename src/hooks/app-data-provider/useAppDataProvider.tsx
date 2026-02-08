@@ -5,6 +5,7 @@ import React, { PropsWithChildren, useContext } from 'react';
 import { EmodeCategory } from 'src/helpers/types';
 import { useWeb3Context } from 'src/libs/hooks/useWeb3Context';
 import { useRootStore } from 'src/store/root';
+import { TEST_MODE } from 'src/utils/testMode';
 
 import { formatEmodes } from '../../store/poolSelectors';
 import {
@@ -83,19 +84,88 @@ export const AppDataProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const sdkMarket = data?.find((item) => item.address.toLowerCase() === marketAddress);
 
-  const totalBorrows = sdkMarket?.borrowReserves.reduce((acc, reserve) => {
+  const totalBorrowsFromSdk = sdkMarket?.borrowReserves.reduce((acc, reserve) => {
     const value = reserve.borrowInfo?.total?.usd ?? 0;
     return acc + Number(value);
   }, 0);
 
-  const supplyReserves = (sdkMarket?.supplyReserves ?? []).map((reserve) => ({
-    ...reserve,
-    id: `${sdkMarket?.address}-${reserve.underlyingToken.address}`,
+  const formattedReserves = formattedPoolReserves || [];
+
+  const fallbackReserves = formattedReserves.map((reserve) => ({
+    id: `${marketAddress}-${reserve.underlyingAsset}`,
+    underlyingToken: {
+      address: reserve.underlyingAsset,
+      symbol: reserve.symbol,
+      name: reserve.name,
+    },
+    aToken: {
+      address: reserve.aTokenAddress,
+    },
+    vToken: {
+      address: reserve.variableDebtTokenAddress,
+    },
+    size: {
+      amount: { value: reserve.totalLiquidity },
+      usd: reserve.totalLiquidityUSD,
+    },
+    supplyInfo: {
+      apy: { value: reserve.supplyAPY },
+    },
+    borrowInfo: {
+      total: {
+        amount: { value: reserve.totalDebt },
+        usd: reserve.totalDebtUSD,
+      },
+      apy: { value: reserve.variableBorrowAPY },
+      borrowingState: reserve.borrowingEnabled ? 'ENABLED' : 'DISABLED',
+    },
+    incentives: [],
+    isFrozen: reserve.isFrozen,
+    isPaused: reserve.isPaused,
+    acceptsNative: reserve.isWrappedBaseAsset,
+    isolationModeConfig: {
+      canBeCollateral: reserve.usageAsCollateralEnabled,
+    },
   }));
 
-  const borrowReserves = (sdkMarket?.borrowReserves ?? []).map((reserve) => ({
+  const totalBorrowsFromFallback = formattedReserves.reduce(
+    (acc, reserve) => acc + Number(reserve.totalDebtUSD || 0),
+    0
+  );
+
+  const totalMarketSizeFromFallback = formattedReserves.reduce(
+    (acc, reserve) => acc + Number(reserve.totalLiquidityUSD || 0),
+    0
+  );
+
+  const totalAvailableLiquidityFromFallback = formattedReserves.reduce(
+    (acc, reserve) => acc + Number(reserve.availableLiquidityUSD || 0),
+    0
+  );
+
+  const shouldUseFallbackReserves =
+    !sdkMarket ||
+    (sdkMarket.supplyReserves?.length ?? 0) === 0 ||
+    (sdkMarket.borrowReserves?.length ?? 0) === 0;
+
+  const totalBorrows = !Number.isFinite(totalBorrowsFromSdk)
+    ? totalBorrowsFromFallback
+    : sdkMarket
+    ? totalBorrowsFromSdk
+    : totalBorrowsFromFallback;
+
+  const supplyReserves = (
+    shouldUseFallbackReserves ? fallbackReserves : sdkMarket?.supplyReserves ?? fallbackReserves
+  ).map((reserve) => ({
     ...reserve,
-    id: `${sdkMarket?.address}-${reserve.underlyingToken.address}`,
+    id: `${sdkMarket?.address ?? marketAddress}-${reserve.underlyingToken.address}`,
+  }));
+
+  const borrowReserves = (
+    shouldUseFallbackReserves ? fallbackReserves : sdkMarket?.borrowReserves ?? fallbackReserves
+  ).map((reserve) => ({
+    ...reserve,
+    id: `${sdkMarket?.address ?? marketAddress}-${reserve.underlyingToken.address}`,
   }));
 
   const eModeCategories = sdkMarket?.eModeCategories ?? [];
@@ -126,7 +196,17 @@ export const AppDataProvider: React.FC<PropsWithChildren> = ({ children }) => {
     <AppDataContext.Provider
       value={{
         loading,
-        market: sdkMarket,
+        market:
+          sdkMarket &&
+          Number.isFinite(Number(sdkMarket.totalMarketSize)) &&
+          Number.isFinite(Number(sdkMarket.totalAvailableLiquidity))
+            ? sdkMarket
+            : formattedReserves.length
+            ? ({
+                totalMarketSize: String(totalMarketSizeFromFallback),
+                totalAvailableLiquidity: String(totalAvailableLiquidityFromFallback),
+              } as Market)
+            : undefined,
         totalBorrows,
         supplyReserves,
         borrowReserves,
@@ -137,8 +217,12 @@ export const AppDataProvider: React.FC<PropsWithChildren> = ({ children }) => {
         eModes,
         user: userSummary,
         userReserves: userReserves || [],
-        marketReferencePriceInUsd: baseCurrencyData?.marketReferenceCurrencyPriceInUsd || '0',
-        marketReferenceCurrencyDecimals: baseCurrencyData?.marketReferenceCurrencyDecimals || 0,
+        marketReferencePriceInUsd: TEST_MODE
+          ? '1'
+          : baseCurrencyData?.marketReferenceCurrencyPriceInUsd || '0',
+        marketReferenceCurrencyDecimals: TEST_MODE
+          ? 8
+          : baseCurrencyData?.marketReferenceCurrencyDecimals || 0,
       }}
     >
       {children}

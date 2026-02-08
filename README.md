@@ -21,14 +21,60 @@ Enabling users to:
 - Manage and monitor their positions on the Aave Safety module
 - Participate in the Aave Governance
 
-## How to use
+## How to use (from zero)
 
-Install it and run:
+### 1) install dependencies
 
 ```sh
 cp .env.example .env.local
-yarn
-yarn dev
+
+# recommended (works around peer-deps conflicts in this repo)
+npm install --legacy-peer-deps
+
+# or, if you prefer yarn
+# yarn
+```
+
+### 2) configure env
+
+for the velkonix arbitrum sepolia market, enable testnet mode via env:
+
+```sh
+# .env.local
+NEXT_PUBLIC_ENV=staging
+```
+
+optional: enable virtual test mode (no onchain calls, mock balances/actions)
+
+```sh
+# .env.local
+NEXT_PUBLIC_TEST_MODE=true
+```
+
+you can also toggle testnets in the ui (settings → “testnet mode”), but `staging` makes it available by default.
+
+### 3) run dev
+
+```sh
+npm run dev
+# or: yarn dev
+```
+
+open http://localhost:3000
+
+### 3a) ui smoke check via playwright (optional)
+
+```sh
+npx playwright screenshot http://localhost:3000/markets /tmp/velkonix-ui.png --wait-for-timeout 8000 --timeout 30000
+```
+
+this writes a full-page screenshot to `/tmp/velkonix-ui.png` for quick verification.
+
+### 4) production build (optional)
+
+```sh
+npm run build
+npm run start -- -p 3000
 ```
 
 ## Contribution

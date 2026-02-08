@@ -13240,6 +13240,42 @@ export const TOKEN_LIST: TokenList = {
       logoURI:
         'https://assets.coingecko.com/coins/images/39651/standard/RLUSD_200x200_%281%29.png?1727376633',
     },
+    // Velkonix (Arbitrum Sepolia)
+    {
+      name: 'Velkonix',
+      address: '0x8063b8a57Ec52e3121E5161133D500A34dC1cA8c',
+      symbol: 'VELK',
+      decimals: 18,
+      chainId: 421614,
+    },
+    {
+      name: 'Staked Velkonix',
+      address: '0xFC7cd49993726e931DeaDCee8F6fE083eFB6103A',
+      symbol: 'xVELK',
+      decimals: 18,
+      chainId: 421614,
+    },
+    {
+      name: 'USDX',
+      address: '0x86Ab95b81b1Db338b3d97aB85A0751a4089A960A',
+      symbol: 'USDX',
+      decimals: 6,
+      chainId: 421614,
+    },
+    {
+      name: 'WBTC',
+      address: '0x23D022Ad0e159490Fdb72b73aF7B5EDE7d6D2eE6',
+      symbol: 'WBTC',
+      decimals: 8,
+      chainId: 421614,
+    },
+    {
+      name: 'WETH',
+      address: '0x60616486c576EEe50d0Dbb2cf48a327ad00F82F4',
+      symbol: 'WETH',
+      decimals: 18,
+      chainId: 421614,
+    },
   ],
 };
 

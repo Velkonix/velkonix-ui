@@ -117,7 +117,7 @@ function useLocalStorage<T>(
         goodTry(() => {
           const str = stringify(defaultValue);
           localStorage.setItem(key, str);
-          storageItem.current = { string, parsed: defaultValue };
+          storageItem.current = { string: str, parsed: defaultValue };
         });
       }
 

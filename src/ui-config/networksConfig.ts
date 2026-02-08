@@ -115,6 +115,8 @@ export const testnetConfig: Record<string, BaseNetworkConfig> = {
   [ChainId.arbitrum_sepolia]: {
     name: 'Arbitrum Sepolia',
     publicJsonRPCUrl: [
+      'https://rpc.ankr.com/arbitrum_sepolia',
+      'https://arbitrum-sepolia.publicnode.com',
       'https://sepolia-rollup.arbitrum.io/rpc',
       'https://public.stackup.sh/api/v1/node/arbitrum-sepolia',
     ],

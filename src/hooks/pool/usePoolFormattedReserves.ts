@@ -7,16 +7,18 @@ import {
 import { formatReservesAndIncentives } from '@aave/math-utils';
 import dayjs from 'dayjs';
 import memoize from 'micro-memoize';
+import { useTestModeStore } from 'src/mocks/testModeStore';
 import { reserveSortFn } from 'src/store/poolSelectors';
 import { MarketDataType } from 'src/ui-config/marketsConfig';
 import { fetchIconSymbolAndName, IconMapInterface } from 'src/ui-config/reservePatches';
 import { getNetworkConfig, NetworkConfig } from 'src/utils/marketsAndNetworksConfig';
+import { TEST_MODE } from 'src/utils/testMode';
 
 import { selectBaseCurrencyData, selectReserves } from './selectors';
 import { usePoolsEModes } from './usePoolEModes';
 import { usePoolsReservesHumanized } from './usePoolReserves';
 import { usePoolsReservesIncentivesHumanized } from './usePoolReservesIncentives';
-import { combineQueries, SimplifiedUseQueryResult } from './utils';
+import { SimplifiedUseQueryResult } from './utils';
 
 export type FormattedReservesAndIncentives = ReturnType<
   typeof formatReservesAndIncentives
@@ -58,23 +60,48 @@ export const usePoolsFormattedReserves = (
   const poolsReservesQueries = usePoolsReservesHumanized(marketsData);
   const poolsReservesIncentivesQueries = usePoolsReservesIncentivesHumanized(marketsData);
   const poolsEModesQueries = usePoolsEModes(marketsData);
+  const mockVersion = useTestModeStore((state) => state.version);
+  const getFormattedReserves = useTestModeStore((state) => state.getFormattedReserves);
 
   return poolsReservesQueries.map((poolReservesQuery, index) => {
+    if (TEST_MODE) {
+      mockVersion;
+      return {
+        isPending: false,
+        data: getFormattedReserves() as FormattedReservesAndIncentives[],
+        error: null,
+      };
+    }
+
     const marketData = marketsData[index];
     const poolReservesIncentivesQuery = poolsReservesIncentivesQueries[index];
     const poolEModesQuery = poolsEModesQueries[index];
     const networkConfig = getNetworkConfig(marketData.chainId);
-    const selector = (
-      reservesData: ReservesDataHumanized,
-      incentivesData: ReservesIncentiveDataHumanized[],
-      poolsEModesData: EmodeDataHumanized[]
-    ) => {
-      return formatReserves(reservesData, incentivesData, poolsEModesData, networkConfig);
+
+    const isPending =
+      poolReservesQuery.isPending ||
+      poolReservesIncentivesQuery.isPending ||
+      poolEModesQuery.isPending;
+
+    const reservesData = poolReservesQuery.data;
+    const incentivesData = poolReservesIncentivesQuery.data ?? [];
+    const poolsEModesData = poolEModesQuery.data ?? [];
+
+    const error = poolReservesQuery.error ?? null;
+
+    if (!reservesData) {
+      return {
+        isPending,
+        data: undefined,
+        error,
+      };
+    }
+
+    return {
+      isPending: false,
+      data: formatReserves(reservesData, incentivesData, poolsEModesData, networkConfig),
+      error: null,
     };
-    return combineQueries(
-      [poolReservesQuery, poolReservesIncentivesQuery, poolEModesQuery] as const,
-      selector
-    );
   });
 };
 

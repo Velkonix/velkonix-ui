@@ -1,9 +1,11 @@
 import { API_ETH_MOCK_ADDRESS, ReservesDataHumanized } from '@aave/contract-helpers';
 import { nativeToUSD, normalize, USD_DECIMALS } from '@aave/math-utils';
 import { BigNumber } from 'bignumber.js';
+import { useTestModeStore } from 'src/mocks/testModeStore';
 import { UserPoolTokensBalances } from 'src/services/WalletBalanceService';
 import { useRootStore } from 'src/store/root';
 import { MarketDataType, networkConfigs } from 'src/utils/marketsAndNetworksConfig';
+import { TEST_MODE } from 'src/utils/testMode';
 
 import { usePoolsReservesHumanized } from '../pool/usePoolReserves';
 import { usePoolsTokensBalance } from '../pool/usePoolTokensBalance';
@@ -100,7 +102,18 @@ export interface WalletBalances {
 }
 
 export const useWalletBalances = (marketData: MarketDataType): WalletBalances => {
+  const getWalletBalances = useTestModeStore((state) => state.getWalletBalances);
   const { walletBalances, isLoading } = usePoolsWalletBalances([marketData]);
+
+  if (TEST_MODE) {
+    const balances = getWalletBalances();
+    return {
+      walletBalances: balances,
+      hasEmptyWallet: Object.values(balances).every((b) => b.amount === '0'),
+      loading: false,
+    };
+  }
+
   return {
     walletBalances: walletBalances[0].walletBalances,
     hasEmptyWallet: walletBalances[0].hasEmptyWallet,

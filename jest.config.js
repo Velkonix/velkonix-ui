@@ -19,7 +19,11 @@ const customJestConfig = {
   moduleNameMapper: {
     'd3-time-format': '<rootDir>/node_modules/d3-time-format/dist/d3-time-format.min.js',
     'd3-time': '<rootDir>/node_modules/d3-time/dist/d3-time.min.js',
+    '^wagmi/chains$': '<rootDir>/src/mocks/wagmiChains.ts',
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(wagmi|viem|@wagmi|@aave/contract-helpers|@aave/graphql|@aave/react|@aave/math-utils)/)',
+  ],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

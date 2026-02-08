@@ -45,7 +45,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const coingeckoApiKey = process.env.COINGECKO_API_KEY;
     if (!coingeckoApiKey) {
-      return res.status(500).json({ error: 'CoinGecko API key is not configured' });
+      return res.status(200).json({
+        uniqueSymbolsStablecoins: [],
+        uniqueSymbolsEth: [],
+        warning: 'CoinGecko API key is not configured',
+      });
     }
 
     // Fetch for Stablecoins Category and Eth Correlated Categories

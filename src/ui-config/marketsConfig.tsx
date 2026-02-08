@@ -76,6 +76,7 @@ export type MarketDataType = {
 export enum CustomMarket {
   // v3 test networks, all v3.0.1
   proto_base_sepolia_v3 = 'proto_base_sepolia_v3',
+  velkonix_arbitrum_sepolia_v3 = 'velkonix_arbitrum_sepolia_v3',
   // v3 mainnets
   proto_mainnet_v3 = 'proto_mainnet_v3',
   proto_optimism_v3 = 'proto_optimism_v3',
@@ -111,6 +112,33 @@ export enum CustomMarket {
 export const marketsData: {
   [key in keyof typeof CustomMarket]: MarketDataType;
 } = {
+  [CustomMarket.velkonix_arbitrum_sepolia_v3]: {
+    marketTitle: 'Velkonix Arbitrum Sepolia',
+    market: CustomMarket.velkonix_arbitrum_sepolia_v3,
+    chainId: ChainId.arbitrum_sepolia,
+    v3: true,
+    permitDisabled: true,
+    enabledFeatures: {
+      governance: false,
+      staking: false,
+      liquiditySwap: false,
+      collateralRepay: false,
+      incentives: true,
+      withdrawAndSwitch: false,
+      debtSwitch: false,
+      switch: false,
+      limit: false,
+    },
+    addresses: {
+      LENDING_POOL_ADDRESS_PROVIDER: '0x21574270bE1E9bb9EA21025aF1Fc58fdB3A70559',
+      LENDING_POOL: '0x2102E2F0eCa7E293a0BacD343bd001a91e8fa177',
+      WALLET_BALANCE_PROVIDER: '0x6283343DAba7e0d967116888849d62c50570F810',
+      UI_POOL_DATA_PROVIDER: '0xa273c52106D22Bd63b7Cbf7a540382DB5f6d1EB1',
+      UI_INCENTIVE_DATA_PROVIDER: '0x231F54f31A4B3a5BAD95A9aaECcb570488Ed75f0',
+      COLLECTOR: '0xD4aB0313C451961dfE2a77337367DA44b2629993',
+      L2_ENCODER: '0xf612D813661d5A72DA258d2424494d5Ef35c7d09',
+    },
+  },
   [CustomMarket.proto_mainnet_v3]: {
     marketTitle: 'Core',
     market: CustomMarket.proto_mainnet_v3,

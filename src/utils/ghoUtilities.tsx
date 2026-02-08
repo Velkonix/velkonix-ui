@@ -17,6 +17,19 @@ export const getGhoReserve = (reserves: ComputedReserveData[]) => {
   return reserves.find((reserve) => reserve.symbol === GHO_SYMBOL);
 };
 
+export const weightedAverageAPY = (
+  baseBorrowRate: number,
+  totalBorrowAmount: number,
+  discountableAmount: number,
+  borrowRateAfterDiscount: number
+) => {
+  if (totalBorrowAmount <= 0) return borrowRateAfterDiscount;
+  if (totalBorrowAmount <= discountableAmount) return borrowRateAfterDiscount;
+  const discounted = discountableAmount * borrowRateAfterDiscount;
+  const full = (totalBorrowAmount - discountableAmount) * baseBorrowRate;
+  return (discounted + full) / totalBorrowAmount;
+};
+
 /**
  * Determines if the given symbol is GHO and the market supports minting new GHO
  */

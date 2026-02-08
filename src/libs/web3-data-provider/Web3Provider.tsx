@@ -1,11 +1,13 @@
 import { API_ETH_MOCK_ADDRESS, ERC20Service, transactionType } from '@aave/contract-helpers';
 import { SignatureLike } from '@ethersproject/bytes';
-import { JsonRpcProvider, TransactionResponse } from '@ethersproject/providers';
+import { JsonRpcProvider, TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import { BigNumber, PopulatedTransaction, utils } from 'ethers';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { useIsContractAddress } from 'src/hooks/useIsContractAddress';
+import { MOCK_ACCOUNT, useTestModeStore } from 'src/mocks/testModeStore';
 import { useRootStore } from 'src/store/root';
 import { wagmiConfig } from 'src/ui-config/wagmiConfig';
+import { TEST_MODE } from 'src/utils/testMode';
 import { hexToAscii } from 'src/utils/utils';
 import { UserRejectedRequestError } from 'viem';
 import { useAccount, useConnect, useSwitchChain, useWatchAsset } from 'wagmi';
@@ -56,7 +58,9 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
   const account = address;
   const readOnlyMode = utils.isAddress(readOnlyModeAddress || '');
   let currentAccount = account?.toLowerCase() || '';
-  if (readOnlyMode && readOnlyModeAddress) {
+  if (TEST_MODE) {
+    currentAccount = MOCK_ACCOUNT.toLowerCase();
+  } else if (readOnlyMode && readOnlyModeAddress) {
     currentAccount = readOnlyModeAddress;
   }
 
@@ -64,6 +68,12 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
 
   useEffect(() => {
     if (didInit) {
+      return;
+    }
+
+    if (TEST_MODE) {
+      setReadOnlyModeAddress(MOCK_ACCOUNT.toLowerCase());
+      didInit = true;
       return;
     }
 
@@ -89,9 +99,44 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
     didAutoConnectForCypress = true;
   }, [connect, connectors]);
 
+  const applySupply = useTestModeStore((state) => state.applySupply);
+  const applyWithdraw = useTestModeStore((state) => state.applyWithdraw);
+  const applyBorrow = useTestModeStore((state) => state.applyBorrow);
+  const applyRepay = useTestModeStore((state) => state.applyRepay);
+
   const sendTx = async (
     txData: transactionType | PopulatedTransaction
   ): Promise<TransactionResponse> => {
+    if (TEST_MODE) {
+      const iface = new utils.Interface([
+        'function supply(address,uint256,address,uint16)',
+        'function withdraw(address,uint256,address)',
+        'function borrow(address,uint256,uint256,uint16,address)',
+        'function repay(address,uint256,uint256,address)',
+      ]);
+      try {
+        if (txData.data) {
+          const parsed = iface.parseTransaction({ data: txData.data });
+          const asset = String(parsed.args?.[0]).toLowerCase();
+          const amount = BigInt(String(parsed.args?.[1]));
+          if (parsed.name === 'supply') applySupply(asset, amount);
+          if (parsed.name === 'withdraw') applyWithdraw(asset, amount);
+          if (parsed.name === 'borrow') applyBorrow(asset, amount);
+          if (parsed.name === 'repay') applyRepay(asset, amount);
+        }
+      } catch {
+        // ignore decoding errors in test mode
+      }
+      const hash = `0x${Math.random().toString(16).slice(2).padEnd(64, '0')}`.slice(0, 66);
+      const txResponse: TransactionResponse = {
+        hash,
+        confirmations: 0,
+        from: MOCK_ACCOUNT,
+        wait: async () => ({ status: 1 } as TransactionReceipt),
+      } as TransactionResponse;
+      return txResponse;
+    }
+
     const provider = await getEthersProvider(wagmiConfig, { chainId });
     if (provider) {
       const { from, ...data } = txData;
@@ -106,6 +151,9 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
   };
 
   const signTxData = async (unsignedData: string): Promise<SignatureLike> => {
+    if (TEST_MODE) {
+      return `0x${'11'.repeat(65)}`;
+    }
     const provider = await getEthersProvider(wagmiConfig, { chainId });
     if (provider && account) {
       const signature: SignatureLike = await provider.send('eth_signTypedData_v4', [
@@ -149,6 +197,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
     decimals,
     image,
   }: ERC20TokenType): Promise<boolean> => {
+    if (TEST_MODE) return true;
     const provider = await getEthersProvider(wagmiConfig, { chainId });
     if (provider) {
       if (address.toLowerCase() !== API_ETH_MOCK_ADDRESS.toLowerCase()) {
@@ -176,6 +225,10 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
   };
 
   useEffect(() => {
+    if (TEST_MODE) {
+      setAccount(MOCK_ACCOUNT.toLowerCase());
+      return;
+    }
     setAccount(account?.toLowerCase());
   }, [account, setAccount]);
 
