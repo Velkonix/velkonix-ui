@@ -205,10 +205,6 @@ msgstr "USDT on Ethereum requires approval reset before a new approval. This wil
 msgid "After the cooldown period ends, you will enter the unstake window of {0}. You will continue receiving rewards during cooldown and the unstake period."
 msgstr "After the cooldown period ends, you will enter the unstake window of {0}. You will continue receiving rewards during cooldown and the unstake period."
 
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsListItem.tsx
-msgid "..."
-msgstr "..."
-
 #: src/modules/dashboard/LiquidationRiskParametresModal/components/LTVContent.tsx
 msgid "Liquidation <0/> threshold"
 msgstr "Liquidation <0/> threshold"
@@ -1420,7 +1416,6 @@ msgid "No voting power"
 msgstr "No voting power"
 
 #: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsList.tsx
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsListItem.tsx
 #: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsListMobileItem.tsx
 #: src/modules/reserve-overview/SupplyInfo.tsx
 msgid "Can be collateral"
@@ -2372,7 +2367,6 @@ msgstr "supply"
 #: src/modules/dashboard/lists/SuppliedPositionsList/SuppliedPositionsListItem.tsx
 #: src/modules/dashboard/lists/SuppliedPositionsList/SuppliedPositionsListMobileItem.tsx
 #: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsListItem.tsx
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsListItem.tsx
 #: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsListMobileItem.tsx
 #: src/modules/history/actions/ActionDetails.tsx
 #: src/modules/history/HistoryFilterMenu.tsx
@@ -2450,6 +2444,7 @@ msgstr "Forum discussion"
 #: src/components/transactions/Borrow/BorrowModalContent.tsx
 #: src/components/transactions/Withdraw/WithdrawModalContent.tsx
 #: src/modules/dashboard/lists/BorrowAssetsList/BorrowAssetsList.tsx
+#: src/modules/dashboard/lists/BorrowAssetsList/BorrowAssetsListItem.tsx
 msgid "Available"
 msgstr "Available"
 
@@ -3355,7 +3350,6 @@ msgstr "Staked"
 #: src/components/transactions/Supply/SupplyModalContent.tsx
 #: src/components/transactions/Supply/SupplyModalContent.tsx
 #: src/modules/dashboard/lists/SuppliedPositionsList/SuppliedPositionsListMobileItem.tsx
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsListItem.tsx
 #: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsListMobileItem.tsx
 #: src/modules/markets/MarketAssetsList.tsx
 #: src/modules/markets/MarketAssetsListMobileItem.tsx
@@ -3995,8 +3989,6 @@ msgstr "Remaining debt"
 #: src/components/transactions/CollateralChange/CollateralChangeModalContent.tsx
 #: src/components/transactions/Withdraw/WithdrawModalContent.tsx
 #: src/modules/dashboard/lists/SuppliedPositionsList/SuppliedPositionsListMobileItem.tsx
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsListItem.tsx
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsListItem.tsx
 #: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsListMobileItem.tsx
 msgid "Supply balance"
 msgstr "Supply balance"
