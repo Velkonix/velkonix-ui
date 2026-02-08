@@ -79,16 +79,20 @@ export type TestModeState = {
   getMarketTotals: () => { totalMarketSize: string; totalAvailable: string; totalBorrows: string };
 };
 
-const toHuman = (amount: bigint, decimals: number) => {
-  const scale = 10n ** BigInt(decimals);
+const toHuman = (amount: bigint, decimals: number | bigint) => {
+  const decimalsNumber = typeof decimals === 'bigint' ? Number(decimals) : decimals;
+  let scale = 1n;
+  for (let i = 0; i < decimalsNumber; i += 1) {
+    scale *= 10n;
+  }
   const whole = amount / scale;
   const frac = amount % scale;
   if (frac === 0n) return whole.toString();
-  const fracStr = frac.toString().padStart(decimals, '0').replace(/0+$/, '');
+  const fracStr = frac.toString().padStart(decimalsNumber, '0').replace(/0+$/, '');
   return `${whole}.${fracStr}`;
 };
 
-const toUsd = (amount: bigint, decimals: number, priceUsd: number) => {
+const toUsd = (amount: bigint, decimals: number | bigint, priceUsd: number) => {
   const human = Number(toHuman(amount, decimals));
   return String(human * priceUsd);
 };
