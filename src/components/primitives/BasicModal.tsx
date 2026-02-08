@@ -1,5 +1,3 @@
-import { XIcon } from '@heroicons/react/outline';
-import { Box, IconButton, Modal, Paper, SvgIcon } from '@mui/material';
 import React from 'react';
 
 export interface BasicModalProps {
@@ -20,74 +18,60 @@ export const BasicModal = ({
   setOpen,
   withCloseButton = true,
   contentMaxWidth = 420,
-  minContentHeight,
   contentHeight,
   children,
   closeCallback,
-  disableEnforceFocus,
-  BackdropProps,
-  ...props
 }: BasicModalProps) => {
   const handleClose = () => {
     if (closeCallback) closeCallback();
     setOpen(false);
   };
 
+  if (!open) return null;
+
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      disableEnforceFocus={disableEnforceFocus} // Used for wallet modal connection
-      BackdropProps={BackdropProps}
-      sx={{
+    <div
+      role="dialog"
+      aria-modal="true"
+      data-cy="Modal"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.4)',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        '.MuiPaper-root': {
-          outline: 'none',
-        },
+        padding: '12px',
+        zIndex: 1000,
       }}
-      onClick={(e) => {
-        e.stopPropagation();
-      }}
-      {...props}
-      data-cy={'Modal'}
+      onClick={handleClose}
     >
-      <Paper
-        sx={{
-          position: 'relative',
-          margin: '10px',
-          overflowY: 'auto',
+      <div
+        style={{
+          background: '#fff',
+          color: '#000',
           width: '100%',
-          maxWidth: { xs: '359px', xsm: `${contentMaxWidth}px` },
+          maxWidth: `${contentMaxWidth}px`,
           height: contentHeight ? `${contentHeight}px` : 'auto',
-          maxHeight: contentHeight ? `${contentHeight}px` : 'calc(100vh - 20px)',
-          p: 6,
+          maxHeight: contentHeight ? `${contentHeight}px` : 'calc(100vh - 24px)',
+          overflowY: 'auto',
+          padding: '16px',
+          position: 'relative',
         }}
+        onClick={(event) => event.stopPropagation()}
       >
-        {children}
-
         {withCloseButton && (
-          <Box sx={{ position: 'absolute', top: '24px', right: '50px', zIndex: 5 }}>
-            <IconButton
-              sx={{
-                borderRadius: '50%',
-                p: 0,
-                minWidth: 0,
-                position: 'absolute',
-                bgcolor: 'background.paper',
-              }}
-              onClick={handleClose}
-              data-cy={'close-button'}
-            >
-              <SvgIcon sx={{ fontSize: '28px', color: 'text.primary' }}>
-                <XIcon data-cy={'CloseModalIcon'} />
-              </SvgIcon>
-            </IconButton>
-          </Box>
+          <button
+            type="button"
+            onClick={handleClose}
+            data-cy="close-button"
+            style={{ position: 'absolute', top: 8, right: 8 }}
+          >
+            x
+          </button>
         )}
-      </Paper>
-    </Modal>
+        {children}
+      </div>
+    </div>
   );
 };
