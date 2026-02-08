@@ -1,33 +1,17 @@
 import { API_ETH_MOCK_ADDRESS } from '@aave/contract-helpers';
 import { USD_DECIMALS, valueToBigNumber } from '@aave/math-utils';
 import { Trans } from '@lingui/macro';
-import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { Fragment, useState } from 'react';
-import { AssetCategoryMultiSelect } from 'src/components/AssetCategoryMultiselect';
-import { VariableAPYTooltip } from 'src/components/infoTooltips/VariableAPYTooltip';
-import { ListColumn } from 'src/components/lists/ListColumn';
-import { ListHeaderTitle } from 'src/components/lists/ListHeaderTitle';
-import { ListHeaderWrapper } from 'src/components/lists/ListHeaderWrapper';
-import { Warning } from 'src/components/primitives/Warning';
-import { AssetCapsProvider } from 'src/hooks/useAssetCaps';
-import { useCoingeckoCategories } from 'src/hooks/useCoinGeckoCategories';
-import { AssetCategory, isAssetInCategoryDynamic } from 'src/modules/markets/utils/assetCategories';
+import { useState } from 'react';
 import { useRootStore } from 'src/store/root';
 import { fetchIconSymbolAndName } from 'src/ui-config/reservePatches';
-import { GENERAL } from 'src/utils/events';
 import { displayGhoForMintableMarket } from 'src/utils/ghoUtilities';
 import { useShallow } from 'zustand/shallow';
 
-import { CapType } from '../../../../components/caps/helper';
-import { AvailableTooltip } from '../../../../components/infoTooltips/AvailableTooltip';
-import { ListWrapper } from '../../../../components/lists/ListWrapper';
-import { Link } from '../../../../components/primitives/Link';
 import {
   ComputedReserveData,
   useAppDataContext,
 } from '../../../../hooks/app-data-provider/useAppDataProvider';
 import {
-  DASHBOARD_LIST_COLUMN_WIDTHS,
   DashboardReserve,
   handleSortDashboardReserves,
 } from '../../../../utils/dashboardSortUtils';
@@ -36,10 +20,6 @@ import {
   getMaxAmountAvailableToBorrow,
 } from '../../../../utils/getMaxAmountAvailableToBorrow';
 import { isAssetHidden } from '../constants';
-import { ListButtonsColumn } from '../ListButtonsColumn';
-import { ListLoader } from '../ListLoader';
-import { BorrowAssetsListItem } from './BorrowAssetsListItem';
-import { BorrowAssetsListMobileItem } from './BorrowAssetsListMobileItem';
 
 const head = [
   {
@@ -47,74 +27,30 @@ const head = [
     sortKey: 'symbol',
   },
   {
-    title: (
-      <AvailableTooltip
-        event={{
-          eventName: GENERAL.TOOL_TIP,
-          eventParams: { tooltip: 'Available to borrow' },
-        }}
-        capType={CapType.borrowCap}
-        text={<Trans>Available</Trans>}
-        key="availableBorrows"
-        variant="subheader2"
-      />
-    ),
+    title: <Trans>Available</Trans>,
     sortKey: 'availableBorrows',
   },
-
   {
-    title: (
-      <VariableAPYTooltip
-        event={{
-          eventName: GENERAL.TOOL_TIP,
-          eventParams: { tooltip: 'Variable Borrow APY' },
-        }}
-        text={<Trans>APY, variable</Trans>}
-        key="variableBorrowAPY"
-        variant="subheader2"
-      />
-    ),
+    title: <Trans>APY, variable</Trans>,
     sortKey: 'variableBorrowAPY',
   },
 ];
 
 export const BorrowAssetsList = () => {
-  const { data, isLoading, error } = useCoingeckoCategories();
-  const [selectedCategories, setSelectedCategories] = useState<AssetCategory[]>([]);
+  const [sortName, setSortName] = useState('');
+  const [sortDesc, setSortDesc] = useState(false);
 
   const [currentNetworkConfig, currentMarketData] = useRootStore(
     useShallow((store) => [store.currentNetworkConfig, store.currentMarketData])
   );
   const currentMarket = currentMarketData.market;
   const { user, reserves, marketReferencePriceInUsd, loading } = useAppDataContext();
-  const theme = useTheme();
-  const downToXSM = useMediaQuery(theme.breakpoints.down('xsm'));
-  const [sortName, setSortName] = useState('');
-  const [sortDesc, setSortDesc] = useState(false);
-
-  const listCollapseKey = 'borrowAssetsDashboardTableCollapse';
-  const [isListCollapsed, setIsListCollapsed] = useState(
-    localStorage.getItem(listCollapseKey) === 'true'
-  );
 
   const { baseAssetSymbol } = currentNetworkConfig;
 
   const tokensToBorrow = reserves
     .filter((reserve) => (user ? assetCanBeBorrowedByUser(reserve, user) : false))
     .filter((reserve) => !isAssetHidden(currentMarketData.market, reserve.underlyingAsset))
-    // filter by category
-    .filter(
-      (res) =>
-        selectedCategories.length === 0 ||
-        selectedCategories.some((category) =>
-          isAssetInCategoryDynamic(
-            res.symbol,
-            category,
-            data?.stablecoinSymbols,
-            data?.ethCorrelatedSymbols
-          )
-        )
-    )
     .map((reserve: ComputedReserveData) => {
       const availableBorrows = user ? Number(getMaxAmountAvailableToBorrow(reserve, user)) : 0;
 
@@ -141,180 +77,62 @@ export const BorrowAssetsList = () => {
       };
     });
 
-  const maxBorrowAmount = valueToBigNumber(user?.totalBorrowsMarketReferenceCurrency || '0').plus(
-    user?.availableBorrowsMarketReferenceCurrency || '0'
+  const borrowReserves = tokensToBorrow.filter(
+    ({ availableBorrowsInUSD, totalLiquidityUSD, symbol }) => {
+      if (displayGhoForMintableMarket({ symbol, currentMarket })) {
+        return true;
+      }
+
+      return availableBorrowsInUSD !== '0.00' && totalLiquidityUSD !== '0';
+    }
   );
-  const collateralUsagePercent = maxBorrowAmount.eq(0)
-    ? '0'
-    : valueToBigNumber(user?.totalBorrowsMarketReferenceCurrency || '0')
-        .div(maxBorrowAmount)
-        .toFixed();
-
-  const borrowReserves =
-    user?.totalCollateralMarketReferenceCurrency === '0' || +collateralUsagePercent >= 0.98
-      ? tokensToBorrow
-      : tokensToBorrow.filter(({ availableBorrowsInUSD, totalLiquidityUSD, symbol }) => {
-          if (displayGhoForMintableMarket({ symbol, currentMarket })) {
-            return true;
-          }
-
-          return availableBorrowsInUSD !== '0.00' && totalLiquidityUSD !== '0';
-        });
 
   const sortedReserves = handleSortDashboardReserves(
     sortDesc,
     sortName,
     'asset',
-    borrowReserves.sort((a, b) => {
-      if (displayGhoForMintableMarket({ symbol: a.symbol, currentMarket })) return -1;
-      if (displayGhoForMintableMarket({ symbol: b.symbol, currentMarket })) return 1;
-      return 0;
-    }) as unknown as DashboardReserve[]
+    borrowReserves as DashboardReserve[]
   );
-  const borrowDisabled = !sortedReserves.length;
 
-  const RenderHeader: React.FC = () => {
-    return (
-      <ListHeaderWrapper>
-        {head.map((col) => (
-          <ListColumn
-            isRow={col.sortKey === 'symbol'}
-            maxWidth={col.sortKey === 'symbol' ? DASHBOARD_LIST_COLUMN_WIDTHS.ASSET : undefined}
-            key={col.sortKey}
-          >
-            <ListHeaderTitle
-              sortName={sortName}
-              sortDesc={sortDesc}
-              setSortName={setSortName}
-              setSortDesc={setSortDesc}
-              sortKey={col.sortKey}
-              source={'Borrow Dashboard'}
-            >
-              {col.title}
-            </ListHeaderTitle>
-          </ListColumn>
-        ))}
-        <ListButtonsColumn isColumnHeader />
-      </ListHeaderWrapper>
-    );
+  if (loading) return <div>loading...</div>;
+  if (!sortedReserves.length) return null;
+
+  const handleSort = (key: string) => {
+    if (sortName === key) {
+      setSortDesc(!sortDesc);
+      return;
+    }
+    setSortName(key);
+    setSortDesc(false);
   };
 
-  if (loading)
-    return (
-      <ListLoader
-        title={<Trans>Assets to borrow</Trans>}
-        head={head.map((col) => col.title)}
-        withTopMargin
-      />
-    );
-
   return (
-    <ListWrapper
-      titleComponent={
-        <Box
-          sx={{
-            display: 'flex',
-            width: '100%',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            mr: 2,
-          }}
-        >
-          <Typography component="div" variant="h3" sx={{ flex: '0 0 auto', mr: 2 }}>
-            <Trans>Assets to borrow</Trans>
-          </Typography>
-
-          {!downToXSM && !isListCollapsed && (
-            <AssetCategoryMultiSelect
-              selectedCategories={selectedCategories}
-              onCategoriesChange={setSelectedCategories}
-              disabled={isLoading || !!error}
-            />
-          )}
-        </Box>
-      }
-      onCollapseChange={setIsListCollapsed}
-      localStorageName="borrowAssetsDashboardTableCollapse"
-      withTopMargin
-      noData={borrowDisabled}
-      subChildrenComponent={
-        <>
-          {downToXSM && (
-            <>
-              <Box sx={{ px: 4, pb: 4, pt: '2px' }}>
-                <AssetCategoryMultiSelect
-                  selectedCategories={selectedCategories}
-                  onCategoriesChange={setSelectedCategories}
-                  disabled={isLoading || !!error}
-                  sx={{
-                    buttonGroup: { width: '100%', maxWidth: '100%', height: '30px' },
-                    button: { fontSize: '0.7rem' },
-                  }}
-                />
-              </Box>
-            </>
-          )}
-          <Box sx={{ px: 6 }}>
-            {user?.healthFactor !== '-1' && Number(user?.healthFactor) <= 1.1 && (
-              <Warning severity="error">
-                <Trans>
-                  Be careful - You are very close to liquidation. Consider depositing more
-                  collateral or paying down some of your borrowed positions
-                </Trans>
-              </Warning>
-            )}
-
-            {!borrowDisabled && (
-              <>
-                {user?.isInIsolationMode && (
-                  <Warning severity="warning">
-                    <Trans>Borrowing power and assets are limited due to Isolation mode. </Trans>
-                    <Link href="https://docs.aave.com/faq/" target="_blank" rel="noopener">
-                      Learn More
-                    </Link>
-                  </Warning>
-                )}
-                {user?.isInEmode && (
-                  <Warning severity="warning">
-                    <Trans>
-                      In E-Mode some assets are not borrowable. Exit E-Mode to get access to all
-                      assets
-                    </Trans>
-                  </Warning>
-                )}
-                {user?.totalCollateralMarketReferenceCurrency === '0' && (
-                  <Warning severity="info">
-                    <Trans>To borrow you need to supply any asset to be used as collateral.</Trans>
-                  </Warning>
-                )}
-              </>
-            )}
-            {borrowDisabled && (
-              <Warning severity="info">
-                <Trans>
-                  We couldn&apos;t find any assets related to your search. Try again with a
-                  different category.
-                </Trans>
-              </Warning>
-            )}
-          </Box>
-        </>
-      }
-    >
-      <>
-        {!downToXSM && !!borrowReserves.length && <RenderHeader />}
-        {sortedReserves?.map((item) => (
-          <Fragment key={item.underlyingAsset}>
-            <AssetCapsProvider asset={item.reserve}>
-              {downToXSM ? (
-                <BorrowAssetsListMobileItem {...item} />
-              ) : (
-                <BorrowAssetsListItem {...item} />
-              )}
-            </AssetCapsProvider>
-          </Fragment>
-        ))}
-      </>
-    </ListWrapper>
+    <section>
+      <h2>
+        <Trans>Assets to borrow</Trans>
+      </h2>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            {head.map((col) => (
+              <th key={col.sortKey} style={{ textAlign: 'left', padding: '8px' }}>
+                <button type="button" onClick={() => handleSort(col.sortKey)}>
+                  {col.title}
+                </button>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {sortedReserves.map((item) => (
+            <tr key={item.id || item.underlyingAsset}>
+              <td style={{ padding: '8px' }}>{item.symbol}</td>
+              <td style={{ padding: '8px' }}>{item.availableBorrows ?? '0'}</td>
+              <td style={{ padding: '8px' }}>{item.variableBorrowRate ?? '-'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
   );
 };

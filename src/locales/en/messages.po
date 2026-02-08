@@ -392,15 +392,6 @@ msgstr "For swapping safety module assets please unstake your position <0>here</
 msgid "Fees help support the user experience and security of the Aave application. <0>Learn more.</0>"
 msgstr "Fees help support the user experience and security of the Aave application. <0>Learn more.</0>"
 
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsList.tsx
-msgid "Your {networkName} wallet is empty. Get free test assets at"
-msgstr "Your {networkName} wallet is empty. Get free test assets at"
-
-#: src/modules/dashboard/lists/BorrowAssetsList/BorrowAssetsList.tsx
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsList.tsx
-msgid "We couldn't find any assets related to your search. Try again with a different category."
-msgstr "We couldn't find any assets related to your search. Try again with a different category."
-
 #: src/modules/governance/GovernanceTopPanel.tsx
 msgid "documentation"
 msgstr "documentation"
@@ -592,10 +583,6 @@ msgstr "Data couldn't be fetched, please reload graph."
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: src/modules/dashboard/lists/BorrowAssetsList/BorrowAssetsList.tsx
-msgid "Be careful - You are very close to liquidation. Consider depositing more collateral or paying down some of your borrowed positions"
-msgstr "Be careful - You are very close to liquidation. Consider depositing more collateral or paying down some of your borrowed positions"
-
 #: src/modules/dashboard/lists/SupplyAssetsList/WalletEmptyInfo.tsx
 msgid "Your {name} wallet is empty. Purchase or transfer assets."
 msgstr "Your {name} wallet is empty. Purchase or transfer assets."
@@ -783,10 +770,6 @@ msgstr "Fetching data..."
 msgid "Join the community discussion"
 msgstr "Join the community discussion"
 
-#: src/modules/dashboard/lists/BorrowAssetsList/BorrowAssetsList.tsx
-msgid "Borrowing power and assets are limited due to Isolation mode."
-msgstr "Borrowing power and assets are limited due to Isolation mode."
-
 #: src/components/infoTooltips/BorrowCapMaxedTooltip.tsx
 msgid "Protocol borrow cap at 100% for this asset. Further borrowing unavailable."
 msgstr "Protocol borrow cap at 100% for this asset. Further borrowing unavailable."
@@ -802,10 +785,6 @@ msgstr "stETH supplied as collateral will continue to accrue staking rewards pro
 #: src/modules/migration/MigrationLists.tsx
 msgid "Borrowed assets"
 msgstr "Borrowed assets"
-
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsList.tsx
-msgid "Collateral usage is limited because of isolation mode. <0>Learn More</0>"
-msgstr "Collateral usage is limited because of isolation mode. <0>Learn More</0>"
 
 #: src/components/transactions/Swap/modals/result/SwapResultView.tsx
 msgid "Swap saved in your <0>history</0> section."
@@ -916,7 +895,6 @@ msgstr "Please connect your wallet to see migration tool."
 
 #: src/hooks/useReserveActionState.tsx
 #: src/hooks/useReserveActionState.tsx
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsList.tsx
 msgid "{networkName} Faucet"
 msgstr "{networkName} Faucet"
 
@@ -1094,7 +1072,6 @@ msgstr "Linked addresses"
 msgid "on"
 msgstr "on"
 
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsList.tsx
 #: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsList.tsx
 msgid "Assets to supply"
 msgstr "Assets to supply"
@@ -2119,7 +2096,6 @@ msgid "No results found. You can import a custom token with a contract address"
 msgstr "No results found. You can import a custom token with a contract address"
 
 #: src/hooks/useReserveActionState.tsx
-#: src/modules/dashboard/lists/BorrowAssetsList/BorrowAssetsList.tsx
 msgid "To borrow you need to supply any asset to be used as collateral."
 msgstr "To borrow you need to supply any asset to be used as collateral."
 
@@ -2513,7 +2489,6 @@ msgstr "Maximum amount available to supply is <0/> {0} (<1/>)."
 msgid "You don’t have enough funds in your wallet to repay the full amount. If you proceed to repay with your current amount of funds, you will still have a small borrowing position in your dashboard."
 msgstr "You don’t have enough funds in your wallet to repay the full amount. If you proceed to repay with your current amount of funds, you will still have a small borrowing position in your dashboard."
 
-#: src/modules/dashboard/lists/BorrowAssetsList/BorrowAssetsList.tsx
 #: src/modules/dashboard/lists/BorrowAssetsList/BorrowAssetsList.tsx
 msgid "Assets to borrow"
 msgstr "Assets to borrow"
@@ -2966,10 +2941,6 @@ msgstr "{0} on-ramp service is provided by External Provider and by selecting yo
 #: src/components/transactions/StakingMigrate/StakingMigrateModalContent.tsx
 msgid "Migrated"
 msgstr "Migrated"
-
-#: src/modules/dashboard/lists/BorrowAssetsList/BorrowAssetsList.tsx
-msgid "In E-Mode some assets are not borrowable. Exit E-Mode to get access to all assets"
-msgstr "In E-Mode some assets are not borrowable. Exit E-Mode to get access to all assets"
 
 #: src/modules/umbrella/UmbrellaHeader.tsx
 msgid "here."
@@ -3496,10 +3467,6 @@ msgstr "Asset cannot be migrated because you have isolated collateral in {market
 #: src/components/transactions/Swap/warnings/postInputs/HighPriceImpactWarning.tsx
 msgid "I confirm the swap with a potential {0}% value {1}"
 msgstr "I confirm the swap with a potential {0}% value {1}"
-
-#: src/modules/dashboard/lists/SupplyAssetsList/SupplyAssetsList.tsx
-msgid "Show assets with 0 balance"
-msgstr "Show assets with 0 balance"
 
 #: src/modules/dashboard/DashboardEModeButton.tsx
 msgid "E-Mode"
