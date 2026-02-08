@@ -1,10 +1,6 @@
 import { useMediaQuery } from '@mui/material';
-import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { deepmerge } from '@mui/utils';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
-
-import { getDesignTokens, getThemedComponents } from '../utils/theme';
 
 export const ColorModeContext = React.createContext({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -43,19 +39,11 @@ export function AppGlobalStyles({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const theme = useMemo(() => {
-    const themeCreate = createTheme(getDesignTokens(mode));
-    return deepmerge(themeCreate, getThemedComponents(themeCreate));
-  }, [mode]);
+  const theme = useMemo(() => createTheme({ palette: { mode } }), [mode]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <CssBaseline />
-
-        {children}
-      </ThemeProvider>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
     </ColorModeContext.Provider>
   );
 }

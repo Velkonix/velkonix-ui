@@ -274,10 +274,6 @@ msgstr "Total Deposited"
 msgid "{0}{name}"
 msgstr "{0}{name}"
 
-#: src/components/TopInfoPanel/PageTitle.tsx
-msgid "Favourited"
-msgstr "Favourited"
-
 #: src/ui-config/errorMapping.tsx
 msgid "Stable borrowing is enabled"
 msgstr "Stable borrowing is enabled"
@@ -3136,10 +3132,6 @@ msgstr "Your {name} wallet is empty. Purchase or transfer assets or use <0>{0}</
 msgid "Checking approval"
 msgstr "Checking approval"
 
-#: src/components/TopInfoPanel/PageTitle.tsx
-msgid "Favourite"
-msgstr "Favourite"
-
 #: src/modules/staking/BuyWithFiat.tsx
 msgid "Buy {cryptoSymbol} with Fiat"
 msgstr "Buy {cryptoSymbol} with Fiat"
@@ -3383,10 +3375,6 @@ msgstr "Net Protocol Incentives"
 #: src/ui-config/errorMapping.tsx
 msgid "The caller of this function must be a pool"
 msgstr "The caller of this function must be a pool"
-
-#: src/components/TopInfoPanel/PageTitle.tsx
-msgid "Migrate to V3"
-msgstr "Migrate to V3"
 
 #: src/modules/reserve-overview/ReserveConfiguration.tsx
 msgid "Interest rate strategy"

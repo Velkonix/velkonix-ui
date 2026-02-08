@@ -1,4 +1,3 @@
-import { Box, Container, ContainerProps } from '@mui/material';
 import { ReactNode } from 'react';
 
 import { PageTitle, PageTitleProps } from './PageTitle';
@@ -6,55 +5,15 @@ import { PageTitle, PageTitleProps } from './PageTitle';
 interface TopInfoPanelProps extends PageTitleProps {
   children?: ReactNode;
   titleComponent?: ReactNode;
-  containerProps?: ContainerProps;
+  containerProps?: unknown;
 }
 
-export const TopInfoPanel = ({
-  pageTitle,
-  titleComponent,
-  withMarketSwitcher,
-  withMigrateButton,
-  withFavoriteButton,
-  bridge,
-  children,
-  containerProps = {},
-}: TopInfoPanelProps) => {
+export const TopInfoPanel = ({ pageTitle, titleComponent, children }: TopInfoPanelProps) => {
   return (
-    <Box
-      sx={{
-        bgcolor: 'background.header',
-        pt: { xs: 10, md: 12 },
-        pb: { xs: 18, md: 20, lg: '94px', xl: '92px', xxl: '96px' },
-        color: '#F1F1F3',
-      }}
-    >
-      <Container {...containerProps} sx={{ ...containerProps.sx, pb: 0 }}>
-        <Box sx={{ px: { xs: 4, xsm: 6 } }}>
-          {!titleComponent && (
-            <PageTitle
-              pageTitle={pageTitle}
-              withMarketSwitcher={withMarketSwitcher}
-              withMigrateButton={withMigrateButton}
-              withFavoriteButton={withFavoriteButton}
-              bridge={bridge}
-            />
-          )}
-
-          {titleComponent && titleComponent}
-
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: { xs: 3, xsm: 8 },
-              flexWrap: 'wrap',
-              width: '100%',
-            }}
-          >
-            {children}
-          </Box>
-        </Box>
-      </Container>
-    </Box>
+    <section style={{ padding: '16px 12px', borderBottom: '1px solid #ccc' }}>
+      {!titleComponent && <PageTitle pageTitle={pageTitle} />}
+      {titleComponent && titleComponent}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>{children}</div>
+    </section>
   );
 };
