@@ -1401,6 +1401,7 @@ msgstr "Merkl rewards are claimed through the"
 #: src/components/transactions/Stake/StakeActions.tsx
 #: src/layouts/components/NavItems.tsx
 #: src/layouts/components/StakingMenu.tsx
+#: src/layouts/components/StakingMenu.tsx
 #: src/modules/umbrella/UmbrellaActions.tsx
 #: src/modules/umbrella/UmbrellaHeader.tsx
 msgid "Staking"
@@ -2174,11 +2175,6 @@ msgstr "Staked Underlying"
 msgid "For security reasons, limit orders are not supported for Native tokens. To place a limit order, use the wrapped version."
 msgstr "For security reasons, limit orders are not supported for Native tokens. To place a limit order, use the wrapped version."
 
-#: src/layouts/components/StakingMenu.tsx
-#: src/layouts/components/StakingMenu.tsx
-msgid "Umbrella"
-msgstr "Umbrella"
-
 #: src/components/incentives/MeritIncentivesTooltipContent.tsx
 msgid "Merit Program and Self rewards can be claimed"
 msgstr "Merit Program and Self rewards can be claimed"
@@ -2855,8 +2851,6 @@ msgid "Borrowable"
 msgstr "Borrowable"
 
 #: src/layouts/components/NavItems.tsx
-#: src/layouts/components/StakingMenu.tsx
-#: src/layouts/components/StakingMenu.tsx
 #: src/modules/staking/StakingHeader.tsx
 msgid "Safety Module"
 msgstr "Safety Module"
