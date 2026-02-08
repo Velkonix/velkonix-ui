@@ -16,12 +16,7 @@ export const MarketsTopPanel = () => {
   const symbolsVariant = downToSM ? 'secondary16' : 'secondary21';
 
   return (
-    <TopInfoPanel
-      containerProps={marketContainerProps}
-      pageTitle={<Trans>Markets</Trans>}
-      withMarketSwitcher
-      withFavoriteButton
-    >
+    <TopInfoPanel containerProps={marketContainerProps} pageTitle={<Trans>Markets</Trans>}>
       <TopInfoPanelItem hideIcon title={<Trans>Total market size</Trans>} loading={loading}>
         <FormattedNumber
           value={Number(market?.totalMarketSize)}

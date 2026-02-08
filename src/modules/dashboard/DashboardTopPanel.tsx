@@ -166,11 +166,7 @@ export const DashboardTopPanel = () => {
       <TopInfoPanel
         titleComponent={
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <PageTitle
-              pageTitle={<Trans>Dashboard</Trans>}
-              withMarketSwitcher={true}
-              bridge={currentNetworkConfig.bridge}
-            />
+            <PageTitle pageTitle={<Trans>Dashboard</Trans>} bridge={currentNetworkConfig.bridge} />
             {showMigrateButton && !downToSM && (
               <Box sx={{ alignSelf: 'center', mb: 4, width: '100%' }}>
                 <Link href={ROUTES.marketMigrationTool(currentMarket)}>
