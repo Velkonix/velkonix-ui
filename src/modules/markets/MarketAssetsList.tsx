@@ -1,17 +1,9 @@
 import { Trans } from '@lingui/macro';
-import { useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import { mapAaveProtocolIncentives } from 'src/components/incentives/incentives.helper';
-import { VariableAPYTooltip } from 'src/components/infoTooltips/VariableAPYTooltip';
-import { ListColumn } from 'src/components/lists/ListColumn';
-import { ListHeaderTitle } from 'src/components/lists/ListHeaderTitle';
-import { ListHeaderWrapper } from 'src/components/lists/ListHeaderWrapper';
 
 import { ReserveWithId } from '../../hooks/app-data-provider/useAppDataProvider';
 import { MarketAssetsListItem } from './MarketAssetsListItem';
-import { MarketAssetsListItemLoader } from './MarketAssetsListItemLoader';
-import { MarketAssetsListMobileItem } from './MarketAssetsListMobileItem';
-import { MarketAssetsListMobileItemLoader } from './MarketAssetsListMobileItemLoader';
 
 const listHeaders = [
   {
@@ -31,13 +23,7 @@ const listHeaders = [
     sortKey: 'borrowInfo.total.usd',
   },
   {
-    title: (
-      <VariableAPYTooltip
-        text={<Trans>Borrow APY, variable</Trans>}
-        key="APY_list_variable_type"
-        variant="subheader2"
-      />
-    ),
+    title: <Trans>Borrow APY, variable</Trans>,
     sortKey: 'borrowInfo.apy.value',
   },
 ];
@@ -52,7 +38,6 @@ export type ReserveWithProtocolIncentives = ReserveWithId & {
 };
 
 export default function MarketAssetsList({ reserves, loading }: MarketAssetsListProps) {
-  const isTableChangedToCards = useMediaQuery('(max-width:1125px)');
   const [sortName, setSortName] = useState('');
   const [sortDesc, setSortDesc] = useState(false);
   const sortedReserves = [...reserves].sort((a, b) => {
@@ -103,60 +88,41 @@ export default function MarketAssetsList({ reserves, loading }: MarketAssetsList
     supplyProtocolIncentives: mapAaveProtocolIncentives(reserve.incentives, 'supply'),
     borrowProtocolIncentives: mapAaveProtocolIncentives(reserve.incentives, 'borrow'),
   }));
-  // Show loading state when loading
+
   if (loading) {
-    return isTableChangedToCards ? (
-      <>
-        <MarketAssetsListMobileItemLoader />
-        <MarketAssetsListMobileItemLoader />
-        <MarketAssetsListMobileItemLoader />
-      </>
-    ) : (
-      <>
-        <MarketAssetsListItemLoader />
-        <MarketAssetsListItemLoader />
-        <MarketAssetsListItemLoader />
-        <MarketAssetsListItemLoader />
-      </>
-    );
+    return <div>loading...</div>;
   }
 
-  // Hide list when no results, via search term or if a market has all/no frozen/unfrozen assets
   if (reserves.length === 0) return null;
 
-  return (
-    <>
-      {!isTableChangedToCards && (
-        <ListHeaderWrapper px={6}>
-          {listHeaders.map((col) => (
-            <ListColumn
-              isRow={col.sortKey === 'underlyingToken.symbol'}
-              maxWidth={col.sortKey === 'underlyingToken.symbol' ? 280 : undefined}
-              key={col.sortKey}
-            >
-              <ListHeaderTitle
-                sortName={sortName}
-                sortDesc={sortDesc}
-                setSortName={setSortName}
-                setSortDesc={setSortDesc}
-                sortKey={col.sortKey}
-                source="Markets Page"
-              >
-                {col.title}
-              </ListHeaderTitle>
-            </ListColumn>
-          ))}
-          <ListColumn maxWidth={95} minWidth={95} />
-        </ListHeaderWrapper>
-      )}
+  const handleSort = (key: string) => {
+    if (sortName === key) {
+      setSortDesc(!sortDesc);
+      return;
+    }
+    setSortName(key);
+    setSortDesc(false);
+  };
 
-      {reservesWithIncentives.map((reserve) =>
-        isTableChangedToCards ? (
-          <MarketAssetsListMobileItem {...reserve} key={reserve.id} />
-        ) : (
+  return (
+    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <thead>
+        <tr>
+          {listHeaders.map((col) => (
+            <th key={col.sortKey} style={{ textAlign: 'left', padding: '8px' }}>
+              <button type="button" onClick={() => handleSort(col.sortKey)}>
+                {col.title}
+              </button>
+            </th>
+          ))}
+          <th style={{ textAlign: 'left', padding: '8px' }} />
+        </tr>
+      </thead>
+      <tbody>
+        {reservesWithIncentives.map((reserve) => (
           <MarketAssetsListItem {...reserve} key={reserve.id} />
-        )
-      )}
-    </>
+        ))}
+      </tbody>
+    </table>
   );
 }
